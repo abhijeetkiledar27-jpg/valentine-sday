@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💌</title>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --pink: #ffafcc;
+            --dark-pink: #fb6f92;
+            --paper: #fdf8e1;
+            --ink: #2b2d42;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fce1e4;
+            font-family: 'Patrick Hand', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .scrapbook-page {
+            background: var(--paper);
+            width: 90%;
+            max-width: 600px;
+            min-height: 80vh;
+            padding: 40px;
+            position: relative;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+            border: 3px solid var(--ink);
+            transform: rotate(-1deg);
+            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .washi-tape {
+            position: absolute;
+            width: 100px;
+            height: 30px;
+            background: rgba(255, 175, 204, 0.6);
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(2deg);
+            border: 1px dashed rgba(0,0,0,0.2);
+        }
+
+        h1 { font-family: 'Indie Flower', cursive; color: var(--dark-pink); text-align: center; font-size: 2.5rem; }
+        .hidden { display: none !important; }
+
+        /* Landing Page */
+        #landing-page { text-align: center; }
+        .gif-container img { width: 100%; max-width: 300px; border-radius: 10px; margin: 20px 0; border: 4px solid white; box-shadow: 3px 3px 10px rgba(0,0,0,0.1); }
+        
+        .btn-container { position: relative; height: 150px; margin-top: 30px; }
+        .btn {
+            font-family: 'Patrick Hand', cursive;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border: 2px solid var(--ink);
+            cursor: pointer;
+            border-radius: 15px;
+            transition: all 0.2s ease;
+            position: absolute;
+        }
+        #yes-btn { background: var(--pink); color: white; left: 20%; transform: translateX(-50%); }
+        #no-btn { background: white; color: var(--ink); right: 20%; transform: translateX(50%); z-index: 10; }
+
+        /* Quiz Elements */
+        #quiz-page { color: var(--ink); }
+        .question { margin-bottom: 25px; background: rgba(255,255,255,0.5); padding: 15px; border-radius: 10px; border: 2px dashed var(--pink); }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .option-btn {
+            background: white; border: 1px solid var(--ink); padding: 10px; border-radius: 5px; 
+            font-family: 'Patrick Hand', cursive; cursor: pointer;
+        }
+        .option-btn.selected { background: var(--pink); color: white; }
+
+        /* Reward Page */
+        #reward-page { text-align: center; }
+        .gift-box { border: 5px solid var(--dark-pink); padding: 20px; border-radius: 20px; background: white; display: inline-block; margin-top: 20px; }
+
+        /* Floating Hearts & Doodles */
+        .sticker { position: absolute; font-size: 2rem; pointer-events: none; }
+        .heart-doodle { top: 20px; right: 20px; transform: rotate(15deg); }
+        .flower-doodle { bottom: 20px; left: 20px; }
+
+        .floating-heart {
+            position: fixed;
+            top: -10%;
+            color: #ffafcc;
+            animation: floatUp 10s linear infinite;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Music Button */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border: 2px solid var(--ink);
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-family: 'Patrick Hand', cursive;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+        .music-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <button id="music-control" class="music-btn">🎵 Play Our Song</button>
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="scrapbook-page">
+        <div class="washi-tape"></div>
+        <span class="sticker heart-doodle">💖</span>
+        <span class="sticker flower-doodle">🌸</span>
+
+        <div id="landing-page">
+            <h1>Will you be my Valentine?</h1>
+            <div class="gif-container">
+                <img src="us.jpg" alt="Us" onerror="this.src='https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ3eXJ4eXJ4eXJ4eXJ4eXJ4eXJ4eXJ4eXJ4eXJ4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/MDJ9IbxxvDUQM/giphy.gif'">
+            </div>
+            <div class="btn-container">
+                <button id="yes-btn" class="btn">Yes!</button>
+                <button id="no-btn" class="btn">No</button>
+            </div>
+        </div>
+
+        <div id="quiz-page" class="hidden">
+            <h1>How well do you know us? ✨</h1>
+            <div id="quiz-container">
+                </div>
+            <button id="submit-quiz" class="btn" style="position: relative; left: 50%; transform: translateX(-50%); background: var(--dark-pink); color: white;">Check my score!</button>
+        </div>
+
+        <div id="reward-page" class="hidden">
+            <h1>Yay! You're the best! 🎉</h1>
+            <p>Since you got all of them right, here is a special surprise just for you...</p>
+            <div class="gift-box">
+                <p><strong>Your Digital Gift:</strong></p>
+                <p>One "Get Out of Argument Free" Card & A Huge Hug!</p>
+                <p><em>"I love you more than all the code in the world!"</em></p>
+            </div>
+            <div style="margin-top: 20px;">
+                <p>Listen to a sweet note:</p>
+                <audio controls>
+                    <source src="your-voice-note.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const landingPage = document.getElementById('landing-page');
+        const quizPage = document.getElementById('quiz-page');
+        const rewardPage = document.getElementById('reward-page');
+        
+        let yesSize = 1.5; 
+
+        // --- BUTTON LOGIC ---
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${Math.max(10, Math.min(x, window.innerWidth - 100))}px`;
+            noBtn.style.top = `${Math.max(10, Math.min(y, window.innerHeight - 100))}px`;
+
+            yesSize += 0.5;
+            yesBtn.style.fontSize = `${yesSize}rem`;
+            yesBtn.style.padding = `${yesSize * 10}px ${yesSize * 20}px`;
+        });
+
+        yesBtn.addEventListener('click', () => {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ffafcc', '#fb6f92', '#ffffff']
+            });
+            
+            setTimeout(() => {
+                landingPage.classList.add('hidden');
+                quizPage.classList.remove('hidden');
+                loadQuiz();
+            }, 1000);
+        });
+
+        // --- QUIZ LOGIC ---
+        const questions = [
+            { q: "Where was our first date?", options: ["Foodie Monk", "Park", "Mela", "Mandir"], correct: 2 },
+            { q: "What's my favorite thing about you?", options: ["Your Smile", "Your Hair", "Your Eyes", "Everything"], correct: 3 },
+            { q: "In which class, do we fell in love?", options: ["8TH", "9th", "10TH", "11TH"], correct: 1 },
+            { q: "What's our dream vacation?", options:  ["Paris", "Japan", "Romania", "United States"], correct: 1 },
+            { 
+                q: "Are you ready to spent the rest of your life with me?", 
+                options: ["YES!!", "Option - 1", "Option - 2", "Option - 3"], 
+                correct: 0 
+            }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = questions.map((item, index) => `
+                <div class="question">
+                    <p><strong>${index + 1}. ${item.q}</strong></p>
+                    <div class="options">
+                        ${item.options.map((opt, i) => `
+                            <button class="option-btn" data-q="${index}" data-idx="${i}">${opt}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const qIndex = parseInt(e.target.getAttribute('data-q'));
+                    const oIndex = parseInt(e.target.getAttribute('data-idx'));
+
+                    if (qIndex === 4) { 
+                        const optionsInLastQ = document.querySelectorAll(`.option-btn[data-q="4"]`);
+                        
+                        for (let i = oIndex; i >= 0; i--) {
+                            optionsInLastQ.forEach(b => b.classList.remove('selected'));
+                            const currentStep = document.querySelector(`.option-btn[data-q="4"][data-idx="${i}"]`);
+                            currentStep.classList.add('selected');
+                            
+                            await new Promise(resolve => setTimeout(resolve, 100)); 
+                        }
+                    } else {
+                        document.querySelectorAll(`.option-btn[data-q="${qIndex}"]`).forEach(b => b.classList.remove('selected'));
+                        e.target.classList.add('selected');
+                    }
+                });
+            });
+        }
+
+        // --- SUBMIT BUTTON LOGIC ---
+        document.getElementById('submit-quiz').addEventListener('click', () => {
+            let score = 0;
+            const selected = document.querySelectorAll('.option-btn.selected');
+            
+            if (selected.length < 5) {
+                alert("Please answer all 5 questions first! 🥺");
+                return;
+            }
+
+            selected.forEach(btn => {
+                const qIdx = btn.getAttribute('data-q');
+                const oIdx = btn.getAttribute('data-idx');
+                if (parseInt(oIdx) === questions[qIdx].correct) score++;
+            });
+
+            if (score === 5) {
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.6 }
+                });
+                quizPage.classList.add('hidden');
+                rewardPage.classList.remove('hidden');
+            } else {
+                alert(`You got ${score}/5! Try again, I know you know me better than that! ❤️`);
+            }
+        });
+
+        // --- MUSIC LOGIC ---
+        const musicBtn = document.getElementById('music-control');
+        const bgMusic = document.getElementById('bg-music');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.innerHTML = "🎵 Play Our Song";
+            } else {
+                bgMusic.play();
+                musicBtn.innerHTML = "⏸️ Pause Music";
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // --- FLOATING HEARTS LOGIC ---
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's'; 
+            document.body.appendChild(heart);
+            
+            setTimeout(() => { heart.remove(); }, 7000); 
+        }
+        setInterval(createHeart, 300); 
+
+    </script>
+</body>
+</html>
